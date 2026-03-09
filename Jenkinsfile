@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Install Dependencies') {
             steps {
                 sh '/opt/jenkins-venv/bin/pip install -r requirements.txt'
@@ -17,7 +16,7 @@ pipeline {
 
         stage('SCA Scan') {
             steps {
-                sh '/opt/dependency-check/bin/dependency-check.sh --project "TP-Jenkins" --scan . --format HTML'
+                sh '/opt/dependency-check/bin/dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --data /var/jenkins_home/dependency-check-data'
             }
         }
     }
