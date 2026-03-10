@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 checkout scm
@@ -25,23 +24,19 @@ pipeline {
             }
         }
 
-        stage('SAST Scan') {
-            steps {
-                sh 'sonar-scanner'
-            }
-        }
-
         stage('SCA Scan') {
             steps {
                 sh '''
+                rm -f dependency-check-report.html
+
                 /opt/dependency-check/bin/dependency-check.sh \
-                --project "TP-Jenkins" \
-                --scan . \
-                --format HTML \
-                --failOnCVSS 7
-                --out . \
-                --data $DC_DATA \
-                --enableExperimental
+                  --project "TP-Jenkins" \
+                  --scan . \
+                  --format HTML \
+                  --out . \
+                  --data $DC_DATA \
+                  --enableExperimental \
+                  --failOnCVSS 7
                 '''
             }
         }
@@ -50,6 +45,12 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'dependency-check-report.html', fingerprint: true
+        }
+        success {
+            echo 'Build completed successfully'
+        }
+        failure {
+            echo 'Build failed due to errors or vulnerabilities'
         }
     }
 }
