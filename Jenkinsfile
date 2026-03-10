@@ -38,6 +38,7 @@ pipeline {
                 --project "TP-Jenkins" \
                 --scan . \
                 --format HTML \
+                --failOnCVSS 7
                 --out . \
                 --data $DC_DATA \
                 --enableExperimental
