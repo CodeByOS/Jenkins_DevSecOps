@@ -17,10 +17,13 @@ pipeline {
         stage('SCA Scan') {
             steps {
                 sh '''
+                rm -f dependency-check-report.html
+
                 /opt/dependency-check/bin/dependency-check.sh \
                   --project "TP-Jenkins" \
-                  --scan . \
+                  --scan requirements.txt \
                   --format HTML \
+                  --out . \
                   --data /var/jenkins_home/dependency-check-data \
                   --enableExperimental
                 '''
@@ -31,12 +34,6 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'dependency-check-report.html', fingerprint: true
-        }
-        failure {
-            echo 'Build failed due to errors or vulnerabilities'
-        }
-        success {
-            echo 'Build completed successfully'
         }
     }
 }
