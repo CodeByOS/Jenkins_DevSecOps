@@ -25,11 +25,5 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'dependency-check-report.html', fingerprint: true
         }
-        failure {
-            echo 'Build failed due to errors or vulnerabilities'
-        }
-        success {
-            echo 'Build completed successfully'
-        }
     }
 }
