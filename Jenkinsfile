@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 checkout scm
@@ -40,19 +39,15 @@ pipeline {
                 '''
             }
         }
-
     }
 
     post {
-
         always {
             archiveArtifacts artifacts: 'dependency-check-report.html', fingerprint: true
         }
-
         success {
             echo 'Build completed successfully'
         }
-
         failure {
             echo 'Build failed due to errors or vulnerabilities'
         }

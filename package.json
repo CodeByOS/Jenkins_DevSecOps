@@ -1,6 +1,13 @@
 {
-  "name": "vulnerable-test",
+  "name": "tp-jenkins-security",
   "version": "1.0.0",
+  "description": "Test project for Jenkins DevSecOps TP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No JS tests\""
+  },
+  "author": "Oussama SAIDI",
+  "license": "MIT",
   "dependencies": {
     "lodash": "4.17.11"
   }
