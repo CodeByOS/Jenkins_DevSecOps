@@ -1,42 +1,34 @@
 pipeline {
     agent any
 
-    environment {
-        DC_DATA = "/var/jenkins_home/dependency-check-data"
-    }
-
     stages {
-        stage('Checkout Code') {
+
+        stage('Clone Repository') {
             steps {
-                checkout scm
+                git 'https://github.com/CodeByOS/Jenkins_DevSecOps.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '/opt/jenkins-venv/bin/pip install -r requirements.txt'
+                sh 'pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '/opt/jenkins-venv/bin/pytest'
+                sh 'pytest'
             }
         }
 
         stage('SCA Scan') {
             steps {
                 sh '''
-                rm -f dependency-check-report.html
-
                 /opt/dependency-check/bin/dependency-check.sh \
-                  --project "TP-Jenkins" \
-                  --scan . \
-                  --format HTML \
-                  --out . \
-                  --data $DC_DATA \
-                  --enableExperimental \
-                  --failOnCVSS 7
+                --project "TP-Jenkins" \
+                --scan . \
+                --format HTML \
+                --failOnCVSS 7
                 '''
             }
         }
@@ -44,13 +36,11 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'dependency-check-report.html', fingerprint: true
+            archiveArtifacts artifacts: 'dependency-check-report.html'
         }
-        success {
-            echo 'Build completed successfully'
-        }
+
         failure {
-            echo 'Build failed due to errors or vulnerabilities'
+            echo 'Build failed due to vulnerabilities (CVSS >= 7)'
         }
     }
 }
