@@ -27,6 +27,9 @@ pipeline {
             steps {
                 sh '''
                 /opt/dependency-check/bin/dependency-check.sh \
+                --updateonly
+
+                /opt/dependency-check/bin/dependency-check.sh \
                 --project "TP-Jenkins" \
                 --scan . \
                 --format HTML \
