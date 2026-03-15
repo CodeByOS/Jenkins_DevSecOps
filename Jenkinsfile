@@ -2,50 +2,49 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Setup Python Environment') {
+        stage('Clone Repository') {
             steps {
-                sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                git 'https://github.com/CodeByOS/Jenkins_DevSecOps.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
-                pytest
-                '''
+                sh 'pytest test_app.py -v'
+            }
+        }
+
+        stage('SAST Scan') {
+            steps {
+                sh 'sonar-scanner'
             }
         }
 
         stage('SCA Scan') {
             steps {
                 sh '''
-                /opt/dependency-check/bin/dependency-check.sh \
-                --updateonly
-
-                /opt/dependency-check/bin/dependency-check.sh \
-                --project "TP-Jenkins" \
-                --scan . \
-                --format HTML \
-                --failOnCVSS 7
+                    dependency-check.sh \
+                        --project "TP-Jenkins" \
+                        --scan . \
+                        --format HTML \
+                        --failOnCVSS 7
                 '''
             }
         }
     }
 
     post {
-        always {
-            archiveArtifacts artifacts: 'dependency-check-report.html'
+        success {
+            echo 'Pipeline terminé avec succès !'
         }
-
         failure {
-            echo 'Build failed due to vulnerabilities (CVSS >= 7)'
+            echo 'Build échoué : erreurs ou vulnérabilités détectées.'
         }
     }
 }
