@@ -32,7 +32,8 @@ pipeline {
                         ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
                             -Dsonar.projectKey=tp-jenkins \
                             -Dsonar.sources=. \
-                            -Dsonar.language=py
+                            -Dsonar.python.version=3.13 \
+                            -Dsonar.exclusions=**/reports/**,**/*.html,**/venv/**
                     """
                 }
             }
