@@ -1,16 +1,21 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_SCANNER_HOME = tool 'SonarScanner'
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/CodeByOS/Jenkins_DevSecOps.git'
+                git branch: 'main',
+                    url: 'https://github.com/CodeByOS/Jenkins_DevSecOps.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'pip3 install -r requirements.txt'
             }
         }
 
@@ -22,7 +27,14 @@ pipeline {
 
         stage('SAST Scan') {
             steps {
-                sh 'sonar-scanner'
+                withSonarQubeEnv('SonarQube') {
+                    sh """
+                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=tp-jenkins \
+                            -Dsonar.sources=. \
+                            -Dsonar.language=py
+                    """
+                }
             }
         }
 
@@ -33,6 +45,7 @@ pipeline {
                         --project "TP-Jenkins" \
                         --scan . \
                         --format HTML \
+                        --out ./reports \
                         --failOnCVSS 7
                 '''
             }
@@ -40,6 +53,10 @@ pipeline {
     }
 
     post {
+        always {
+            archiveArtifacts artifacts: 'reports/*.html',
+                             allowEmptyArchive: true
+        }
         success {
             echo 'Pipeline terminé avec succès !'
         }
