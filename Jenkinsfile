@@ -47,6 +47,8 @@ pipeline {
                         --scan . \
                         --format HTML \
                         --out ./reports \
+                        --data /var/jenkins_home/dependency-check-data \
+                        --nvdApiKey CD9D0F86-7820-F111-836A-0EBF96DE670D \
                         --failOnCVSS 7
                 '''
             }
