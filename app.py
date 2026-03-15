@@ -1,5 +1,5 @@
-def add(a, b):
-    return a + b
+import requests
 
-def subtract(a, b):
-    return a - b
+def get_data():
+    r = requests.get("https://api.github.com")
+    return r.status_code
