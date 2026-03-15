@@ -21,7 +21,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'pytest test_app.py -v'
+                sh '/var/jenkins_home/.local/bin/pytest test_app.py -v'
             }
         }
 
